@@ -1,0 +1,16 @@
+{
+  "name": "africhain-bot",
+  "version": "1.0.0",
+  "description": "Telegram Bot for AfriChain Connect",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js",
+    "dev": "nodemon bot.js"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "^0.61.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
