@@ -134,6 +134,58 @@
         
         <div class="card">
             <h2>Quick Actions</h2>
+                        <div id="farmerForm" style="display: none;" class="card">
+                <h2>👨‍🌾 Farmer Registration</h2>
+                <input type="text" id="farmName" placeholder="Farm Name" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white;">
+                
+                <select id="cropType" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white;">
+                    <option value="">Select Main Crop</option>
+                    <option value="maize">🌽 Maize</option>
+                    <option value="soybean">🥜 Soybean</option>
+                    <option value="wheat">🌾 Wheat</option>
+                    <option value="coffee">☕ Coffee</option>
+                </select>
+                
+                <input type="number" id="farmSize" placeholder="Farm Size (hectares)" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white;">
+                
+                <button class="btn" onclick="submitFarmerForm()">✅ Complete Registration</button>
+            </div>
+
+            <script>
+            function showFarmerForm() {
+                document.getElementById('farmerForm').style.display = 'block';
+            }
+
+            function submitFarmerForm() {
+                const farmName = document.getElementById('farmName').value;
+                const cropType = document.getElementById('cropType').value;
+                const farmSize = document.getElementById('farmSize').value;
+                
+                if (!farmName || !cropType || !farmSize) {
+                    tg.showAlert('Please fill all fields!');
+                    return;
+                }
+                
+                // Send to your backend (in future)
+                const farmerData = {
+                    telegramId: user.id,
+                    farmName: farmName,
+                    cropType: cropType,
+                    farmSize: farmSize,
+                    timestamp: new Date().toISOString()
+                };
+                
+                tg.sendData(JSON.stringify({
+                    type: 'farmer_registration',
+                    data: farmerData
+                }));
+                
+                tg.showAlert(`✅ Registration complete!\n\nFarm: ${farmName}\nCrop: ${cropType}\nSize: ${farmSize} hectares`);
+                
+                // Hide form
+                document.getElementById('farmerForm').style.display = 'none';
+            }
+            </script>   
             <button class="btn" onclick="createFarmerProfile()">
                 👨‍🌾 Create Farmer Profile
             </button>
