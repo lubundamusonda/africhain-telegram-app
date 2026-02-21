@@ -2,7 +2,7 @@
 // Save this as bot.js and run: node bot.js
 
 const TelegramBot = require('node-telegram-bot-api');
-const token = 'YOUR_BOT_TOKEN_HERE'; // Replace with your token
+const token = '7665340593:AAFhvYA_6GiDMuMEqhitKLKaUBY5cQBhaUg'; // Replace with your token
 
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
@@ -16,7 +16,7 @@ bot.onText(/\/start/, (msg) => {
     const firstName = msg.from.first_name;
     
     bot.sendMessage(chatId, 
-        `🌱 Welcome ${firstName} to AfriChain Connect!\n\n` +
+        `🌱 Welcome ${firstName} to AfriChain Connect! by Musonda group of companies\n\n` +
         `I'm your gateway to:\n` +
         `• 📊 Agricultural Marketplace\n` +
         `• ⚡ Renewable Energy Projects\n` +
@@ -27,7 +27,7 @@ bot.onText(/\/start/, (msg) => {
                 inline_keyboard: [[
                     {
                         text: '🚀 Open AfriChain App',
-                        web_app: {url: 'https://YOUR_USERNAME.github.io/africhain/'}
+                        web_app: {url: 'https://lubundamusonda.github.io/africhain/'}
                     }
                 ]]
             }
@@ -96,7 +96,7 @@ bot.on('inline_query', (query) => {
                 inline_keyboard: [[
                     {
                         text: 'Open Marketplace',
-                        web_app: {url: 'https://YOUR_USERNAME.github.io/africhain/'}
+                        web_app: {url: 'https://lubundamusonda.github.io/africhain/'}
                     }
                 ]]
             }
@@ -114,7 +114,7 @@ bot.on('inline_query', (query) => {
                 inline_keyboard: [[
                     {
                         text: 'Browse Energy Projects',
-                        web_app: {url: 'https://YOUR_USERNAME.github.io/africhain/'}
+                        web_app: {url: 'https://lubundamusonda.github.io/africhain/'}
                     }
                 ]]
             }
