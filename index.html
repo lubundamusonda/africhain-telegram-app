@@ -1,319 +1,1808 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AfriChain Connect - Zambia</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AfriChain Connect - Zambia</title>
+    
+    <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Tailwind CSS (for responsive design) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Styles -->
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
         * {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            transition: all 0.2s ease;
         }
         
         body {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
             min-height: 100vh;
+            padding-bottom: 80px; /* Space for bottom nav */
         }
         
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
         }
         
-        .header {
-            text-align: center;
-            padding: 30px 0;
-        }
-        
-        .logo {
-            font-size: 48px;
-            margin-bottom: 10px;
-        }
-        
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        
-        .subtitle {
-            opacity: 0.8;
-            margin-bottom: 30px;
-        }
-        
-        .card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            margin: 20px 0;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .btn {
-            background: linear-gradient(90deg, #00C853, #64DD17);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin: 10px 0;
-            transition: transform 0.2s;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #FF9800, #FF5722);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: bold;
-        }
-        
-        .feature-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin: 30px 0;
-        }
-        
-        .feature {
+        ::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
         }
         
-        .feature-icon {
-            font-size: 30px;
-            margin-bottom: 10px;
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #10b981, #059669);
+            border-radius: 10px;
+        }
+        
+        /* Card hover effects */
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Pulse animation for notifications */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Loading spinner */
+        .loader {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #10b981;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .nav-item.active {
+            color: #10b981;
+            transform: translateY(-5px);
+        }
+        
+        .nav-item.active svg {
+            filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">🌱</div>
-            <h1>AfriChain Connect</h1>
-            <p class="subtitle">Zambia's Agricultural & Energy Marketplace</p>
-        </div>
-        
-        <div id="userSection" class="card">
-            <div class="user-info">
-                <div class="avatar" id="userAvatar">?</div>
-                <div>
-                    <h3 id="userName">Loading...</h3>
-                    <p id="userId">Telegram ID: --</p>
-                </div>
-            </div>
-            <p>Welcome to Africa's first integrated marketplace for sustainable agriculture and clean energy!</p>
-        </div>
-        
-        <div class="card">
-            <h2>Quick Actions</h2>
-                        <div id="farmerForm" style="display: none;" class="card">
-                <h2>👨‍🌾 Farmer Registration</h2>
-                <input type="text" id="farmName" placeholder="Farm Name" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white;">
-                
-                <select id="cropType" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white;">
-                    <option value="">Select Main Crop</option>
-                    <option value="maize">🌽 Maize</option>
-                    <option value="soybean">🥜 Soybean</option>
-                    <option value="wheat">🌾 Wheat</option>
-                    <option value="coffee">☕ Coffee</option>
-                </select>
-                
-                <input type="number" id="farmSize" placeholder="Farm Size (hectares)" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white;">
-                
-                <button class="btn" onclick="submitFarmerForm()">✅ Complete Registration</button>
-            </div>
-
-            <script>
-            function showFarmerForm() {
-                document.getElementById('farmerForm').style.display = 'block';
-            }
-
-            function submitFarmerForm() {
-                const farmName = document.getElementById('farmName').value;
-                const cropType = document.getElementById('cropType').value;
-                const farmSize = document.getElementById('farmSize').value;
-                
-                if (!farmName || !cropType || !farmSize) {
-                    tg.showAlert('Please fill all fields!');
-                    return;
-                }
-                
-                // Send to your backend (in future)
-                const farmerData = {
-                    telegramId: user.id,
-                    farmName: farmName,
-                    cropType: cropType,
-                    farmSize: farmSize,
-                    timestamp: new Date().toISOString()
-                };
-                
-                tg.sendData(JSON.stringify({
-                    type: 'farmer_registration',
-                    data: farmerData
-                }));
-                
-                tg.showAlert(`✅ Registration complete!\n\nFarm: ${farmName}\nCrop: ${cropType}\nSize: ${farmSize} hectares`);
-                
-                // Hide form
-                document.getElementById('farmerForm').style.display = 'none';
-            }
-            </script>   
-            <button class="btn" onclick="createFarmerProfile()">
-                👨‍🌾 Create Farmer Profile
-            </button>
-            <button class="btn btn-secondary" onclick="browseProducts()">
-                🔍 Browse Marketplace
-            </button>
-            <button class="btn" onclick="checkCarbonCredits()">
-                🌍 Check Carbon Credits
-            </button>
-        </div>
-        
-        <div class="feature-grid">
-            <div class="feature">
-                <div class="feature-icon">💰</div>
-                <h4>Instant Payments</h4>
-                <p>Get paid directly via Telegram</p>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">📈</div>
-                <h4>Market Prices</h4>
-                <p>Real-time crop & energy prices</p>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">🌤️</div>
-                <h4>Solar Projects</h4>
-                <p>Invest in clean energy</p>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">📊</div>
-                <h4>Carbon Trading</h4>
-                <p>Sell verified carbon credits</p>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2>Getting Started</h2>
-            <p><strong>Step 1:</strong> Create your farmer/buyer profile</p>
-            <p><strong>Step 2:</strong> Browse or list products</p>
-            <p><strong>Step 3:</strong> Connect with buyers/sellers</p>
-            <p><strong>Step 4:</strong> Trade securely with AI verification</p>
+<body class="pb-20">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 bg-gray-900 flex flex-col items-center justify-center z-50">
+        <div class="loader mb-4"></div>
+        <div class="text-center">
+            <h1 class="text-2xl font-bold mb-2">🌱 AfriChain Connect</h1>
+            <p class="text-gray-400">Loading your agricultural marketplace...</p>
         </div>
     </div>
 
-    <script>
-        // Telegram Mini-App Initialization
-        let tg = window.Telegram.WebApp;
+    <!-- Main Container -->
+    <div id="app" class="max-w-md mx-auto px-4 py-6" style="display: none;">
         
-        // Expand to full screen
-        tg.expand();
-        
-        // Set theme colors
-        tg.setHeaderColor('#1e3c72');
-        tg.setBackgroundColor('#1e3c72');
-        
-        // Get user data from Telegram
-        const user = tg.initDataUnsafe.user;
-        
-        if (user) {
-            document.getElementById('userName').textContent = 
-                user.first_name + (user.last_name ? ' ' + user.last_name : '');
-            document.getElementById('userId').textContent = 
-                'Telegram ID: ' + user.id;
+        <!-- Header Section -->
+        <header class="mb-8">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h1 class="text-2xl font-bold flex items-center gap-2">
+                        <span class="bg-gradient-to-r from-green-500 to-emerald-500 text-white p-2 rounded-lg">🌱</span>
+                        AfriChain Connect
+                    </h1>
+                    <p class="text-gray-400 text-sm">Zambia's Agricultural & Energy Marketplace</p>
+                </div>
+                <div class="relative">
+                    <div id="userAvatar" class="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center text-white font-bold text-lg cursor-pointer" onclick="toggleProfileMenu()">
+                        ?
+                    </div>
+                    <!-- Notification Badge -->
+                    <div id="notificationBadge" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-xs flex items-center justify-center text-white hidden">
+                        3
+                    </div>
+                </div>
+            </div>
             
-            // Create avatar from first letter
+            <!-- Quick Stats Bar -->
+            <div class="grid grid-cols-3 gap-3 mb-6">
+                <div class="bg-gray-800/50 rounded-xl p-3 text-center">
+                    <div class="text-2xl font-bold text-emerald-400" id="userCount">0</div>
+                    <div class="text-xs text-gray-400">Farmers</div>
+                </div>
+                <div class="bg-gray-800/50 rounded-xl p-3 text-center">
+                    <div class="text-2xl font-bold text-cyan-400" id="productCount">0</div>
+                    <div class="text-xs text-gray-400">Products</div>
+                </div>
+                <div class="bg-gray-800/50 rounded-xl p-3 text-center">
+                    <div class="text-2xl font-bold text-amber-400" id="carbonCount">0</div>
+                    <div class="text-xs text-gray-400">Carbon Tons</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Sections -->
+        <div id="content">
+            <!-- Home Section (Default) -->
+            <section id="homeSection" class="section">
+                <!-- Welcome Card -->
+                <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-5 mb-6 card-hover border border-gray-700">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h2 class="text-xl font-bold mb-1" id="welcomeName">Welcome!</h2>
+                            <p class="text-gray-400 text-sm">Ready to trade sustainably?</p>
+                        </div>
+                        <div class="text-xs px-3 py-1 bg-emerald-900/50 text-emerald-300 rounded-full">
+                            <span id="userType">New User</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <button onclick="showSection('marketplace')" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white py-3 px-4 rounded-xl flex items-center justify-between">
+                            <span class="flex items-center gap-3">
+                                <span class="text-xl">🛒</span>
+                                <span>Browse Marketplace</span>
+                            </span>
+                            <span>→</span>
+                        </button>
+                        
+                        <button onclick="showFarmerRegistration()" class="w-full bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white py-3 px-4 rounded-xl flex items-center justify-between">
+                            <span class="flex items-center gap-3">
+                                <span class="text-xl">👨‍🌾</span>
+                                <span>Register as Farmer</span>
+                            </span>
+                            <span>+</span>
+                        </button>
+                        
+                        <button onclick="showSection('carbon')" class="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white py-3 px-4 rounded-xl flex items-center justify-between">
+                            <span class="flex items-center gap-3">
+                                <span class="text-xl">🌍</span>
+                                <span>Carbon Credits</span>
+                            </span>
+                            <span>💰</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Grid -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <span>⚡</span> Quick Actions
+                    </h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="showProductListing()" class="bg-gray-800/50 hover:bg-gray-800 rounded-xl p-4 text-center">
+                            <div class="text-2xl mb-2">📝</div>
+                            <div class="font-medium">List Product</div>
+                            <div class="text-xs text-gray-400 mt-1">Sell crops</div>
+                        </button>
+                        
+                        <button onclick="showSection('prices')" class="bg-gray-800/50 hover:bg-gray-800 rounded-xl p-4 text-center">
+                            <div class="text-2xl mb-2">📈</div>
+                            <div class="font-medium">Market Prices</div>
+                            <div class="text-xs text-gray-400 mt-1">Live updates</div>
+                        </button>
+                        
+                        <button onclick="showSection('energy')" class="bg-gray-800/50 hover:bg-gray-800 rounded-xl p-4 text-center">
+                            <div class="text-2xl mb-2">☀️</div>
+                            <div class="font-medium">Solar Projects</div>
+                            <div class="text-xs text-gray-400 mt-1">Invest now</div>
+                        </button>
+                        
+                        <button onclick="showSection('weather')" class="bg-gray-800/50 hover:bg-gray-800 rounded-xl p-4 text-center">
+                            <div class="text-2xl mb-2">🌤️</div>
+                            <div class="font-medium">Weather</div>
+                            <div class="text-xs text-gray-400 mt-1">Farm forecast</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Featured Products -->
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold flex items-center gap-2">
+                            <span>🌟</span> Featured Products
+                        </h3>
+                        <button onclick="showSection('marketplace')" class="text-sm text-emerald-400 hover:text-emerald-300">View All →</button>
+                    </div>
+                    
+                    <div id="featuredProducts" class="space-y-3">
+                        <!-- Products will be loaded here -->
+                        <div class="bg-gray-800/30 rounded-xl p-4 animate-pulse">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="h-4 bg-gray-700 rounded w-24 mb-2"></div>
+                                    <div class="h-3 bg-gray-700 rounded w-16"></div>
+                                </div>
+                                <div class="h-8 bg-gray-700 rounded w-16"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carbon Credit Banner -->
+                <div class="bg-gradient-to-r from-emerald-900/30 to-emerald-800/20 border border-emerald-800/30 rounded-2xl p-5 mb-6">
+                    <div class="flex items-start gap-3">
+                        <div class="text-3xl">🌍</div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1">Earn from Carbon Credits</h3>
+                            <p class="text-gray-300 text-sm mb-3">Turn sustainable farming into extra income. European companies are buying!</p>
+                            <button onclick="showCarbonCalculator()" class="bg-emerald-700 hover:bg-emerald-600 text-white py-2 px-4 rounded-lg text-sm font-medium">
+                                Calculate Earnings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Marketplace Section -->
+            <section id="marketplaceSection" class="section hidden">
+                <div class="flex items-center gap-3 mb-6">
+                    <button onclick="showSection('home')" class="text-2xl">←</button>
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold">🛒 Marketplace</h2>
+                        <p class="text-gray-400">Buy & sell agricultural products</p>
+                    </div>
+                    <button onclick="showProductListing()" class="bg-emerald-600 hover:bg-emerald-700 text-white p-3 rounded-xl">
+                        <span class="text-xl">+</span>
+                    </button>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="mb-6">
+                    <div class="relative">
+                        <input type="text" id="marketSearch" placeholder="Search products..." class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 pl-12 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <div class="absolute left-4 top-3.5 text-gray-400">🔍</div>
+                        <button onclick="clearSearch()" class="absolute right-4 top-3.5 text-gray-400 hover:text-white hidden" id="clearSearchBtn">✕</button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="mb-6 overflow-x-auto">
+                    <div class="flex gap-2 pb-2">
+                        <button class="filter-btn active bg-emerald-900/30 text-emerald-300 border border-emerald-800 px-4 py-2 rounded-lg whitespace-nowrap" data-filter="all">All</button>
+                        <button class="filter-btn bg-gray-800/50 hover:bg-gray-800 px-4 py-2 rounded-lg whitespace-nowrap" data-filter="maize">🌽 Maize</button>
+                        <button class="filter-btn bg-gray-800/50 hover:bg-gray-800 px-4 py-2 rounded-lg whitespace-nowrap" data-filter="coffee">☕ Coffee</button>
+                        <button class="filter-btn bg-gray-800/50 hover:bg-gray-800 px-4 py-2 rounded-lg whitespace-nowrap" data-filter="livestock">🐄 Livestock</button>
+                        <button class="filter-btn bg-gray-800/50 hover:bg-gray-800 px-4 py-2 rounded-lg whitespace-nowrap" data-filter="energy">⚡ Energy</button>
+                    </div>
+                </div>
+
+                <!-- Products List -->
+                <div id="productsList" class="space-y-4">
+                    <!-- Products will be loaded here -->
+                    <div class="text-center py-10">
+                        <div class="text-4xl mb-4">🛒</div>
+                        <h3 class="text-xl font-semibold mb-2">Loading products...</h3>
+                        <p class="text-gray-400">Fetching latest marketplace listings</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Farmer Registration Section -->
+            <section id="farmerRegistrationSection" class="section hidden">
+                <div class="flex items-center gap-3 mb-6">
+                    <button onclick="showSection('home')" class="text-2xl">←</button>
+                    <h2 class="text-2xl font-bold">👨‍🌾 Farmer Registration</h2>
+                </div>
+
+                <div class="bg-gradient-to-br from-emerald-900/20 to-emerald-800/10 border border-emerald-800/30 rounded-2xl p-5 mb-6">
+                    <h3 class="font-bold text-lg mb-2">Why Register?</h3>
+                    <ul class="text-sm text-gray-300 space-y-1 mb-4">
+                        <li>✓ Get verified badge for buyers</li>
+                        <li>✓ Access to premium European markets</li>
+                        <li>✓ Earn carbon credits automatically</li>
+                        <li>✓ Receive instant payments</li>
+                        <li>✓ Free market analytics</li>
+                    </ul>
+                </div>
+
+                <form id="farmerForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Farm Name *</label>
+                        <input type="text" id="farmName" required class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="e.g., Mwila Family Farm">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Farm Type *</label>
+                        <select id="farmType" required class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                            <option value="">Select farm type</option>
+                            <option value="crop">🌽 Crop Farming</option>
+                            <option value="livestock">🐄 Livestock Farming</option>
+                            <option value="mixed">🌾 Mixed Farming</option>
+                            <option value="organic">🥬 Organic Farming</option>
+                            <option value="energy">☀️ Energy Production</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Farm Size (ha) *</label>
+                            <input type="number" id="farmSize" min="0.1" step="0.1" required class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="e.g., 5.5">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Location *</label>
+                            <select id="farmLocation" required class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                                <option value="">Select province</option>
+                                <option value="lusaka">Lusaka Province</option>
+                                <option value="copperbelt">Copperbelt Province</option>
+                                <option value="eastern">Eastern Province</option>
+                                <option value="western">Western Province</option>
+                                <option value="northern">Northern Province</option>
+                                <option value="southern">Southern Province</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Main Crops/Livestock</label>
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" name="crops" value="maize" class="rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500"> 
+                                <span class="ml-2">🌽 Maize</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" name="crops" value="soybeans" class="rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500">
+                                <span class="ml-2">🥜 Soybeans</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" name="crops" value="coffee" class="rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500">
+                                <span class="ml-2">☕ Coffee</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" name="crops" value="cattle" class="rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500">
+                                <span class="ml-2">🐄 Cattle</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Years of Experience</label>
+                        <div class="flex items-center space-x-4">
+                            <button type="button" onclick="updateExperience(-1)" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-xl">-</button>
+                            <span id="experienceYears" class="text-2xl font-bold">5</span> years
+                            <button type="button" onclick="updateExperience(1)" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-xl">+</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Sustainable Practices (Select all that apply)</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="practices" value="agroforestry" class="rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500">
+                                <span class="ml-3">🌳 Agroforestry (tree planting)</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="practices" value="conservation" class="rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500">
+                                <span class="ml-3">🔄 Conservation tillage</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="practices" value="organic" class="rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500">
+                                <span class="ml-3">🥬 Organic fertilizers</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="practices" value="solar" class="rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500">
+                                <span class="ml-3">☀️ Solar irrigation</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2">
+                            <span>✅ Complete Registration</span>
+                        </button>
+                        <p class="text-xs text-gray-400 text-center mt-2">By registering, you agree to our terms and privacy policy</p>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Product Listing Section -->
+            <section id="productListingSection" class="section hidden">
+                <div class="flex items-center gap-3 mb-6">
+                    <button onclick="showSection('marketplace')" class="text-2xl">←</button>
+                    <h2 class="text-2xl font-bold">📝 List Product</h2>
+                </div>
+
+                <form id="productForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Product Type *</label>
+                        <select id="productType" required class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" onchange="updateProductFields()">
+                            <option value="">Select product type</option>
+                            <option value="maize">🌽 Maize</option>
+                            <option value="soybeans">🥜 Soybeans</option>
+                            <option value="coffee">☕ Coffee</option>
+                            <option value="wheat">🌾 Wheat</option>
+                            <option value="cattle">🐄 Cattle</option>
+                            <option value="poultry">🐔 Poultry</option>
+                            <option value="eggs">🥚 Eggs</option>
+                            <option value="honey">🍯 Honey</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2" id="productNameLabel">Product Name *</label>
+                        <input type="text" id="productName" required class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="e.g., White Maize Grade A">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Quantity *</label>
+                            <input type="number" id="productQuantity" min="1" required class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="e.g., 100">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Unit *</label>
+                            <select id="productUnit" required class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                                <option value="kg">Kilograms (kg)</option>
+                                <option value="ton">Metric Tons</option>
+                                <option value="bag">Bags (50kg)</option>
+                                <option value="head">Head (for animals)</option>
+                                <option value="liter">Liters</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Price per Unit (USD) *</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-3.5 text-gray-400">$</span>
+                            <input type="number" id="productPrice" min="0.01" step="0.01" required class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="e.g., 200.50">
+                        </div>
+                        <div class="text-sm text-gray-400 mt-1" id="priceCalculation">Total: $0.00</div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Quality Grade</label>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="setQuality('A')" class="quality-btn flex-1 py-2 rounded-lg border" data-quality="A">Grade A</button>
+                            <button type="button" onclick="setQuality('B')" class="quality-btn flex-1 py-2 rounded-lg border" data-quality="B">Grade B</button>
+                            <button type="button" onclick="setQuality('C')" class="quality-btn flex-1 py-2 rounded-lg border" data-quality="C">Grade C</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Product Description</label>
+                        <textarea id="productDescription" rows="3" class="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" placeholder="Describe your product (quality, storage, delivery options)"></textarea>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2">
+                            <span>📢 List Product</span>
+                        </button>
+                        <p class="text-xs text-gray-400 text-center mt-2">Your product will be visible to all buyers immediately</p>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Carbon Credits Section -->
+            <section id="carbonSection" class="section hidden">
+                <div class="flex items-center gap-3 mb-6">
+                    <button onclick="showSection('home')" class="text-2xl">←</button>
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold">🌍 Carbon Credits</h2>
+                        <p class="text-gray-400">Earn from sustainable farming</p>
+                    </div>
+                </div>
+
+                <!-- Carbon Calculator -->
+                <div class="bg-gradient-to-br from-emerald-900/30 to-emerald-800/20 border border-emerald-800/30 rounded-2xl p-5 mb-6">
+                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                        <span>💰</span> Carbon Earnings Calculator
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Farm Size (hectares)</label>
+                            <input type="range" id="carbonFarmSize" min="1" max="100" value="5" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" oninput="updateCarbonCalculation()">
+                            <div class="flex justify-between text-sm mt-1">
+                                <span>1 ha</span>
+                                <span id="carbonSizeValue" class="font-bold">5 ha</span>
+                                <span>100 ha</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Sustainable Practices</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center justify-between">
+                                    <span>🌳 Agroforestry</span>
+                                    <input type="checkbox" id="practiceAgro" checked onchange="updateCarbonCalculation()" class="rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500">
+                                </label>
+                                <label class="flex items-center justify-between">
+                                    <span>🔄 Conservation tillage</span>
+                                    <input type="checkbox" id="practiceTillage" onchange="updateCarbonCalculation()" class="rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500">
+                                </label>
+                                <label class="flex items-center justify-between">
+                                    <span>🥬 Organic fertilizers</span>
+                                    <input type="checkbox" id="practiceOrganic" checked onchange="updateCarbonCalculation()" class="rounded border-gray-600 bg-gray-700 text-emerald-500 focus:ring-emerald-500">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Results -->
+                        <div class="pt-4 border-t border-emerald-800/30">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-emerald-400" id="carbonTons">0</div>
+                                    <div class="text-xs text-gray-400">Tons CO₂/year</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-amber-400" id="carbonEarnings">$0</div>
+                                    <div class="text-xs text-gray-400">Estimated earnings</div>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-sm text-gray-300">
+                                <p>💡 <strong>Based on current market:</strong> $15-25 per ton CO₂</p>
+                                <p class="text-xs mt-1">European companies buy credits to meet climate goals</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- How It Works -->
+                <div class="mb-6">
+                    <h3 class="font-bold text-lg mb-4">📋 How It Works</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-emerald-900/50 flex items-center justify-center text-emerald-300">1</div>
+                            <div>
+                                <h4 class="font-medium">Register Your Farm</h4>
+                                <p class="text-sm text-gray-400">Provide farm details and GPS location</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-emerald-900/50 flex items-center justify-center text-emerald-300">2</div>
+                            <div>
+                                <h4 class="font-medium">Implement Practices</h4>
+                                <p class="text-sm text-gray-400">Adopt sustainable farming methods</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-emerald-900/50 flex items-center justify-center text-emerald-300">3</div>
+                            <div>
+                                <h4 class="font-medium">Satellite Verification</h4>
+                                <p class="text-sm text-gray-400">AI verifies carbon reduction via satellite</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-emerald-900/50 flex items-center justify-center text-emerald-300">4</div>
+                            <div>
+                                <h4 class="font-medium">Receive Credits</h4>
+                                <p class="text-sm text-gray-400">Get tokenized carbon credits as NFTs</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-emerald-900/50 flex items-center justify-center text-emerald-300">5</div>
+                            <div>
+                                <h4 class="font-medium">Sell to Europe</h4>
+                                <p class="text-sm text-gray-400">European companies purchase your credits</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Call to Action -->
+                <button onclick="registerForCarbon()" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold py-4 rounded-xl">
+                    🚀 Start Earning Carbon Credits
+                </button>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profileSection" class="section hidden">
+                <div class="flex items-center gap-3 mb-6">
+                    <button onclick="showSection('home')" class="text-2xl">←</button>
+                    <h2 class="text-2xl font-bold">👤 My Profile</h2>
+                </div>
+
+                <!-- Profile Card -->
+                <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-5 mb-6">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div id="profileAvatar" class="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center text-white font-bold text-2xl">
+                            ?
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold" id="profileName">Loading...</h3>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-xs px-2 py-1 bg-emerald-900/50 text-emerald-300 rounded-full" id="profileType">User</span>
+                                <span class="text-xs px-2 py-1 bg-blue-900/50 text-blue-300 rounded-full" id="profileId">ID: ...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-3 gap-3 mb-4">
+                        <div class="text-center">
+                            <div class="text-lg font-bold" id="profileListings">0</div>
+                            <div class="text-xs text-gray-400">Listings</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-lg font-bold" id="profileSales">0</div>
+                            <div class="text-xs text-gray-400">Sales</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-lg font-bold" id="profileCarbon">0</div>
+                            <div class="text-xs text-gray-400">Carbon Tons</div>
+                        </div>
+                    </div>
+
+                    <!-- Farm Info (if farmer) -->
+                    <div id="farmInfo" class="hidden">
+                        <div class="border-t border-gray-700 pt-4 mt-4">
+                            <h4 class="font-medium mb-2">🏡 Farm Details</h4>
+                            <div class="text-sm space-y-1">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Name:</span>
+                                    <span id="farmInfoName">-</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Type:</span>
+                                    <span id="farmInfoType">-</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Size:</span>
+                                    <span id="farmInfoSize">- ha</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Location:</span>
+                                    <span id="farmInfoLocation">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="mb-6">
+                    <h3 class="font-medium mb-3">⚡ Quick Actions</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="showProductListing()" class="bg-gray-800/50 hover:bg-gray-800 rounded-xl p-3 text-center">
+                            <div class="text-xl mb-1">📝</div>
+                            <div class="text-sm">List Product</div>
+                        </button>
+                        <button onclick="showSection('carbon')" class="bg-gray-800/50 hover:bg-gray-800 rounded-xl p-3 text-center">
+                            <div class="text-xl mb-1">🌍</div>
+                            <div class="text-sm">Carbon Credits</div>
+                        </button>
+                        <button onclick="showTransactions()" class="bg-gray-800/50 hover:bg-gray-800 rounded-xl p-3 text-center">
+                            <div class="text-xl mb-1">💰</div>
+                            <div class="text-sm">Transactions</div>
+                        </button>
+                        <button onclick="showSettings()" class="bg-gray-800/50 hover:bg-gray-800 rounded-xl p-3 text-center">
+                            <div class="text-xl mb-1">⚙️</div>
+                            <div class="text-sm">Settings</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-medium">📅 Recent Activity</h3>
+                        <button onclick="showAllActivity()" class="text-sm text-emerald-400 hover:text-emerald-300">View All</button>
+                    </div>
+                    <div id="recentActivity" class="space-y-3">
+                        <div class="text-center py-4">
+                            <p class="text-gray-400">No activity yet</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Other Sections (Prices, Weather, Energy, Settings) -->
+            <section id="pricesSection" class="section hidden">
+                <!-- Market Prices section content -->
+                <div class="text-center py-10">
+                    <div class="text-4xl mb-4">📈</div>
+                    <h3 class="text-xl font-semibold mb-2">Market Prices</h3>
+                    <p class="text-gray-400">Coming soon: Live agricultural prices</p>
+                </div>
+            </section>
+
+            <section id="weatherSection" class="section hidden">
+                <!-- Weather section content -->
+                <div class="text-center py-10">
+                    <div class="text-4xl mb-4">🌤️</div>
+                    <h3 class="text-xl font-semibold mb-2">Weather Forecast</h3>
+                    <p class="text-gray-400">Coming soon: Farm weather updates</p>
+                </div>
+            </section>
+
+            <section id="energySection" class="section hidden">
+                <!-- Energy Projects section content -->
+                <div class="text-center py-10">
+                    <div class="text-4xl mb-4">☀️</div>
+                    <h3 class="text-xl font-semibold mb-2">Solar Energy Projects</h3>
+                    <p class="text-gray-400">Coming soon: Invest in renewable energy</p>
+                </div>
+            </section>
+
+            <section id="settingsSection" class="section hidden">
+                <!-- Settings section content -->
+                <div class="text-center py-10">
+                    <div class="text-4xl mb-4">⚙️</div>
+                    <h3 class="text-xl font-semibold mb-2">Settings</h3>
+                    <p class="text-gray-400">Coming soon: Account settings</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav bg-gray-900/80 py-3 px-6">
+            <div class="flex justify-between items-center">
+                <button onclick="showSection('home')" class="nav-item flex flex-col items-center text-gray-400 hover:text-white w-16">
+                    <span class="text-2xl">🏠</span>
+                    <span class="text-xs mt-1">Home</span>
+                </button>
+                
+                <button onclick="showSection('marketplace')" class="nav-item flex flex-col items-center text-gray-400 hover:text-white w-16">
+                    <span class="text-2xl">🛒</span>
+                    <span class="text-xs mt-1">Market</span>
+                </button>
+                
+                <button onclick="showProductListing()" class="bg-emerald-600 hover:bg-emerald-700 text-white w-14 h-14 rounded-full flex items-center justify-center text-2xl -mt-6 shadow-lg shadow-emerald-900/50">
+                    +
+                </button>
+                
+                <button onclick="showSection('carbon')" class="nav-item flex flex-col items-center text-gray-400 hover:text-white w-16">
+                    <span class="text-2xl">🌍</span>
+                    <span class="text-xs mt-1">Carbon</span>
+                </button>
+                
+                <button onclick="showSection('profile')" class="nav-item flex flex-col items-center text-gray-400 hover:text-white w-16">
+                    <span class="text-2xl">👤</span>
+                    <span class="text-xs mt-1">Profile</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Toast Notifications -->
+        <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2 w-80"></div>
+
+        <!-- Profile Menu (Dropdown) -->
+        <div id="profileMenu" class="fixed top-20 right-4 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-40 hidden w-48">
+            <div class="p-3 border-b border-gray-700">
+                <div class="font-medium" id="menuUserName">User</div>
+                <div class="text-xs text-gray-400" id="menuUserId">ID: ...</div>
+            </div>
+            <div class="py-2">
+                <button onclick="showSection('profile')" class="w-full text-left px-4 py-2 hover:bg-gray-700 flex items-center gap-3">
+                    <span>👤</span> My Profile
+                </button>
+                <button onclick="showTransactions()" class="w-full text-left px-4 py-2 hover:bg-gray-700 flex items-center gap-3">
+                    <span>💰</span> Transactions
+                </button>
+                <button onclick="showNotifications()" class="w-full text-left px-4 py-2 hover:bg-gray-700 flex items-center gap-3">
+                    <span>🔔</span> Notifications
+                </button>
+                <button onclick="showSettings()" class="w-full text-left px-4 py-2 hover:bg-gray-700 flex items-center gap-3">
+                    <span>⚙️</span> Settings
+                </button>
+                <div class="border-t border-gray-700 mt-2 pt-2">
+                    <button onclick="logout()" class="w-full text-left px-4 py-2 hover:bg-gray-700 text-red-400 flex items-center gap-3">
+                        <span>🚪</span> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // ============ TELEGRAM INTEGRATION ============
+        let tg = window.Telegram.WebApp;
+        let user = null;
+        let appData = {
+            userType: 'visitor',
+            farmData: null,
+            products: [],
+            notifications: 3
+        };
+
+        // ============ APP INITIALIZATION ============
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize Telegram Web App
+            tg.expand();
+            tg.setHeaderColor('#0f172a');
+            tg.setBackgroundColor('#0f172a');
+            tg.enableClosingConfirmation();
+            
+            // Get user data from Telegram
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                user = tg.initDataUnsafe.user;
+                console.log('Telegram User:', user);
+                
+                // Update UI with user data
+                updateUserProfile();
+                
+                // Load user data from localStorage or backend
+                loadUserData();
+            }
+            
+            // Hide loading screen
+            setTimeout(() => {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+                
+                // Show welcome toast
+                showToast('Welcome to AfriChain Connect! 🌱', 'success');
+                
+                // Update notification badge
+                updateNotificationBadge();
+                
+                // Load mock data
+                loadMockData();
+                
+                // Update active nav item
+                updateActiveNav('home');
+            }, 1500);
+            
+            // Set up Main Button
+            tg.MainButton.setText('GET STARTED');
+            tg.MainButton.show();
+            tg.MainButton.onClick(() => {
+                showFarmerRegistration();
+            });
+            
+            // Listen for viewport changes
+            tg.onEvent('viewportChanged', (data) => {
+                console.log('Viewport changed:', data);
+            });
+            
+            // Mark app as ready
+            tg.ready();
+        });
+
+        // ============ USER PROFILE FUNCTIONS ============
+        function updateUserProfile() {
+            if (!user) return;
+            
+            // Update welcome message
+            document.getElementById('welcomeName').textContent = `Welcome, ${user.first_name}!`;
+            
+            // Update avatar
+            const avatar = document.getElementById('userAvatar');
             const firstLetter = user.first_name ? user.first_name[0].toUpperCase() : 'U';
-            document.getElementById('userAvatar').textContent = firstLetter;
+            avatar.textContent = firstLetter;
             
             // Set avatar color based on user ID
-            const colors = ['#FF9800', '#2196F3', '#4CAF50', '#9C27B0'];
-            const colorIndex = user.id % colors.length;
-            document.getElementById('userAvatar').style.background = 
-                `linear-gradient(45deg, ${colors[colorIndex]}, ${colors[(colorIndex + 1) % colors.length]})`;
+            const colors = [
+                ['#10b981', '#059669'], // Emerald
+                ['#3b82f6', '#1d4ed8'], // Blue
+                ['#8b5cf6', '#7c3aed'], // Purple
+                ['#f59e0b', '#d97706']  // Amber
+            ];
+            const colorIndex = (user.id % colors.length);
+            avatar.style.background = `linear-gradient(135deg, ${colors[colorIndex][0]}, ${colors[colorIndex][1]})`;
+            
+            // Update profile menu
+            document.getElementById('menuUserName').textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            document.getElementById('menuUserId').textContent = `ID: ${user.id}`;
+            
+            // Update profile section
+            document.getElementById('profileName').textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            document.getElementById('profileId').textContent = `ID: ${user.id}`;
+            document.getElementById('profileAvatar').textContent = firstLetter;
+            document.getElementById('profileAvatar').style.background = `linear-gradient(135deg, ${colors[colorIndex][0]}, ${colors[colorIndex][1]})`;
         }
-        
-        // Main Button (bottom button)
-        tg.MainButton.setText('START TRADING');
-        tg.MainButton.show();
-        tg.MainButton.onClick(() => {
-            tg.showAlert('Welcome to AfriChain Connect! Let\'s begin your journey.');
-        });
-        
-        // App functions
-        function createFarmerProfile() {
-            tg.showPopup({
-                title: 'Create Farmer Profile',
-                message: 'Enter your farm details to get started:',
-                buttons: [
-                    {id: 'crops', type: 'default', text: '🌽 Crop Farmer'},
-                    {id: 'livestock', type: 'default', text: '🐄 Livestock'},
-                    {id: 'energy', type: 'ok', text: '☀️ Energy Producer'}
-                ]
-            }, (buttonId) => {
-                if (buttonId === 'crops') {
-                    tg.showAlert('Let\'s set up your crop farm profile!');
-                    // In real app, navigate to form
+
+        function loadUserData() {
+            // Try to load from localStorage
+            const savedData = localStorage.getItem('africhain_user_data');
+            if (savedData) {
+                try {
+                    appData = JSON.parse(savedData);
+                    console.log('Loaded user data:', appData);
+                    
+                    // Update UI with loaded data
+                    document.getElementById('userType').textContent = appData.userType === 'farmer' ? 'Farmer' : 'Buyer';
+                    
+                    if (appData.farmData) {
+                        showFarmInfo(appData.farmData);
+                    }
+                    
+                    // Update stats
+                    updateStats();
+                    
+                } catch (e) {
+                    console.error('Error loading user data:', e);
                 }
+            }
+        }
+
+        function saveUserData() {
+            localStorage.setItem('africhain_user_data', JSON.stringify(appData));
+        }
+
+        // ============ NAVIGATION FUNCTIONS ============
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
             });
+            
+            // Show selected section
+            const section = document.getElementById(sectionId + 'Section');
+            if (section) {
+                section.classList.remove('hidden');
+                
+                // Update active nav
+                updateActiveNav(sectionId);
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+                
+                // Load section-specific data
+                switch(sectionId) {
+                    case 'marketplace':
+                        loadProducts();
+                        break;
+                    case 'profile':
+                        loadProfileData();
+                        break;
+                }
+            }
         }
-        
-        function browseProducts() {
-            tg.showPopup({
-                title: 'Browse Marketplace',
-                message: 'What are you looking for?',
-                buttons: [
-                    {id: 'buy', type: 'default', text: '🛒 Buy Products'},
-                    {id: 'sell', type: 'default', text: '💰 Sell Products'},
-                    {id: 'invest', type: 'ok', text: '📈 Invest in Projects'}
-                ]
+
+        function updateActiveNav(section) {
+            // Update bottom nav
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                item.classList.remove('text-emerald-400');
+                item.classList.add('text-gray-400');
             });
+            
+            // Map section to nav index
+            const navMap = {
+                'home': 0,
+                'marketplace': 1,
+                'carbon': 3,
+                'profile': 4
+            };
+            
+            if (navMap[section] !== undefined) {
+                navItems[navMap[section]].classList.add('active', 'text-emerald-400');
+                navItems[navMap[section]].classList.remove('text-gray-400');
+            }
         }
-        
-        function checkCarbonCredits() {
-            tg.showAlert('Carbon credit feature coming soon!\n\nThis will let you earn money by reducing emissions on your farm.');
+
+        // ============ FARMER REGISTRATION ============
+        function showFarmerRegistration() {
+            showSection('farmerRegistrationSection');
         }
-        
-        // Send data back to bot (for future features)
-        function sendDataToBot(data) {
-            tg.sendData(JSON.stringify(data));
+
+        function updateExperience(change) {
+            const element = document.getElementById('experienceYears');
+            let years = parseInt(element.textContent);
+            years = Math.max(0, Math.min(50, years + change));
+            element.textContent = years;
         }
-        
-        // Listen for events from Telegram
-        tg.onEvent('viewportChanged', (data) => {
-            console.log('Viewport changed:', data);
+
+        document.getElementById('farmerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const farmName = document.getElementById('farmName').value.trim();
+            const farmType = document.getElementById('farmType').value;
+            const farmSize = parseFloat(document.getElementById('farmSize').value);
+            const farmLocation = document.getElementById('farmLocation').value;
+            const experience = parseInt(document.getElementById('experienceYears').textContent);
+            
+            // Get selected crops
+            const selectedCrops = [];
+            document.querySelectorAll('input[name="crops"]:checked').forEach(cb => {
+                selectedCrops.push(cb.value);
+            });
+            
+            // Get sustainable practices
+            const practices = [];
+            document.querySelectorAll('input[name="practices"]:checked').forEach(cb => {
+                practices.push(cb.value);
+            });
+            
+            // Validate
+            if (!farmName || !farmType || !farmSize || !farmLocation) {
+                showToast('Please fill all required fields', 'error');
+                return;
+            }
+            
+            if (farmSize <= 0) {
+                showToast('Please enter a valid farm size', 'error');
+                return;
+            }
+            
+            // Save farm data
+            appData.farmData = {
+                name: farmName,
+                type: farmType,
+                size: farmSize,
+                location: farmLocation,
+                experience: experience,
+                crops: selectedCrops,
+                practices: practices,
+                registered: new Date().toISOString()
+            };
+            
+            appData.userType = 'farmer';
+            
+            // Save to localStorage
+            saveUserData();
+            
+            // Update UI
+            document.getElementById('userType').textContent = 'Farmer';
+            showFarmInfo(appData.farmData);
+            updateStats();
+            
+            // Send data to bot (if available)
+            if (tg.sendData) {
+                tg.sendData(JSON.stringify({
+                    type: 'farmer_registration',
+                    data: appData.farmData
+                }));
+            }
+            
+            // Show success
+            showToast('🎉 Farmer registration successful!', 'success');
+            
+            // Go back to home
+            setTimeout(() => {
+                showSection('home');
+            }, 1500);
         });
+
+        // ============ PRODUCT LISTING ============
+        function showProductListing() {
+            // Check if user is registered as farmer
+            if (appData.userType !== 'farmer') {
+                showToast('Please register as a farmer first', 'warning');
+                showFarmerRegistration();
+                return;
+            }
+            
+            showSection('productListingSection');
+        }
+
+        function updateProductFields() {
+            const type = document.getElementById('productType').value;
+            const nameInput = document.getElementById('productName');
+            const nameLabel = document.getElementById('productNameLabel');
+            
+            // Set placeholder based on type
+            const placeholders = {
+                'maize': 'White Maize Grade A, Yellow Maize',
+                'soybeans': 'Soybeans Grade 1, Organic Soybeans',
+                'coffee': 'Arabica Coffee, Robusta Coffee',
+                'wheat': 'Wheat Flour, Whole Wheat',
+                'cattle': 'Beef Cattle, Dairy Cows',
+                'poultry': 'Broiler Chickens, Layer Hens',
+                'eggs': 'Fresh Eggs, Organic Eggs',
+                'honey': 'Raw Honey, Organic Honey'
+            };
+            
+            if (placeholders[type]) {
+                nameInput.placeholder = `e.g., ${placeholders[type]}`;
+            }
+            
+            // Update unit based on type
+            const unitSelect = document.getElementById('productUnit');
+            if (['cattle', 'poultry'].includes(type)) {
+                unitSelect.value = 'head';
+            } else if (type === 'eggs') {
+                unitSelect.value = 'dozen';
+            } else if (type === 'honey') {
+                unitSelect.value = 'liter';
+            } else {
+                unitSelect.value = 'kg';
+            }
+        }
+
+        function setQuality(grade) {
+            const buttons = document.querySelectorAll('.quality-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('border-emerald-500', 'bg-emerald-900/30', 'text-emerald-300');
+                btn.classList.add('border-gray-700', 'bg-gray-800/50');
+            });
+            
+            const activeBtn = document.querySelector(`.quality-btn[data-quality="${grade}"]`);
+            activeBtn.classList.add('border-emerald-500', 'bg-emerald-900/30', 'text-emerald-300');
+            activeBtn.classList.remove('border-gray-700', 'bg-gray-800/50');
+        }
+
+        // Update price calculation
+        document.getElementById('productPrice').addEventListener('input', updatePriceCalculation);
+        document.getElementById('productQuantity').addEventListener('input', updatePriceCalculation);
         
-        // Initialize completed
-        tg.ready();
-        console.log('AfriChain Connect Mini-App loaded successfully!');
+        function updatePriceCalculation() {
+            const price = parseFloat(document.getElementById('productPrice').value) || 0;
+            const quantity = parseFloat(document.getElementById('productQuantity').value) || 0;
+            const total = price * quantity;
+            
+            document.getElementById('priceCalculation').textContent = `Total: $${total.toFixed(2)}`;
+        }
+
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const type = document.getElementById('productType').value;
+            const name = document.getElementById('productName').value.trim();
+            const quantity = parseFloat(document.getElementById('productQuantity').value);
+            const unit = document.getElementById('productUnit').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const description = document.getElementById('productDescription').value.trim();
+            
+            // Get quality grade
+            const qualityBtn = document.querySelector('.quality-btn.border-emerald-500');
+            const quality = qualityBtn ? qualityBtn.dataset.quality : 'B';
+            
+            // Validate
+            if (!type || !name || !quantity || !price) {
+                showToast('Please fill all required fields', 'error');
+                return;
+            }
+            
+            if (quantity <= 0 || price <= 0) {
+                showToast('Please enter valid numbers', 'error');
+                return;
+            }
+            
+            // Create product object
+            const product = {
+                id: Date.now(),
+                type: type,
+                name: name,
+                quantity: quantity,
+                unit: unit,
+                price: price,
+                quality: quality,
+                description: description,
+                farmerId: user.id,
+                farmerName: user.first_name,
+                farmName: appData.farmData ? appData.farmData.name : 'Unknown Farm',
+                location: appData.farmData ? appData.farmData.location : 'Zambia',
+                date: new Date().toISOString(),
+                views: 0,
+                inquiries: 0
+            };
+            
+            // Add to products array
+            appData.products.push(product);
+            
+            // Save data
+            saveUserData();
+            
+            // Send to bot
+            if (tg.sendData) {
+                tg.sendData(JSON.stringify({
+                    type: 'product_listing',
+                    data: product
+                }));
+            }
+            
+            // Show success
+            showToast('📢 Product listed successfully!', 'success');
+            
+            // Update stats
+            updateStats();
+            
+            // Go to marketplace
+            setTimeout(() => {
+                showSection('marketplace');
+            }, 1500);
+        });
+
+        // ============ MARKETPLACE FUNCTIONS ============
+        function loadProducts() {
+            const productsList = document.getElementById('productsList');
+            
+            // Clear loading message
+            productsList.innerHTML = '';
+            
+            // Check if we have products
+            if (appData.products.length === 0) {
+                productsList.innerHTML = `
+                    <div class="text-center py-10">
+                        <div class="text-4xl mb-4">🛒</div>
+                        <h3 class="text-xl font-semibold mb-2">No products yet</h3>
+                        <p class="text-gray-400 mb-4">Be the first to list a product!</p>
+                        <button onclick="showProductListing()" class="bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-6 rounded-lg">
+                            + List Product
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Display products
+            appData.products.forEach(product => {
+                const productElement = createProductElement(product);
+                productsList.appendChild(productElement);
+            });
+        }
+
+        function createProductElement(product) {
+            const div = document.createElement('div');
+            div.className = 'bg-gray-800/30 rounded-xl p-4 hover:bg-gray-800/50 cursor-pointer border border-gray-700';
+            div.onclick = () => showProductDetail(product);
+            
+            // Map type to emoji
+            const typeEmojis = {
+                'maize': '🌽',
+                'soybeans': '🥜',
+                'coffee': '☕',
+                'wheat': '🌾',
+                'cattle': '🐄',
+                'poultry': '🐔',
+                'eggs': '🥚',
+                'honey': '🍯'
+            };
+            
+            const emoji = typeEmojis[product.type] || '📦';
+            
+            div.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xl">${emoji}</span>
+                            <h3 class="font-bold">${product.name}</h3>
+                            <span class="text-xs px-2 py-0.5 bg-emerald-900/30 text-emerald-300 rounded">Grade ${product.quality}</span>
+                        </div>
+                        <p class="text-sm text-gray-400">${product.farmName} • ${product.location}</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-lg font-bold text-emerald-400">$${product.price}/${product.unit}</div>
+                        <div class="text-sm text-gray-400">${product.quantity} ${product.unit} available</div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-700">
+                    <div class="text-xs text-gray-400">
+                        Listed ${formatDate(product.date)}
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-gray-400">👁️ ${product.views}</span>
+                        <span class="text-xs text-gray-400">💬 ${product.inquiries}</span>
+                    </div>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        function showProductDetail(product) {
+            // Create modal for product detail
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4';
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            };
+            
+            // Map type to emoji
+            const typeEmojis = {
+                'maize': '🌽',
+                'soybeans': '🥜',
+                'coffee': '☕',
+                'wheat': '🌾',
+                'cattle': '🐄',
+                'poultry': '🐔',
+                'eggs': '🥚',
+                'honey': '🍯'
+            };
+            
+            const emoji = typeEmojis[product.type] || '📦';
+            
+            modal.innerHTML = `
+                <div class="bg-gray-800 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+                    <!-- Header -->
+                    <div class="p-6 border-b border-gray-700">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <span class="text-3xl">${emoji}</span>
+                                <div>
+                                    <h2 class="text-xl font-bold">${product.name}</h2>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="text-xs px-2 py-0.5 bg-emerald-900/30 text-emerald-300 rounded">Grade ${product.quality}</span>
+                                        <span class="text-xs px-2 py-0.5 bg-blue-900/30 text-blue-300 rounded">${product.type}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="document.body.removeChild(this.parentElement.parentElement.parentElement)" class="text-gray-400 hover:text-white text-2xl">
+                                ×
+                            </button>
+                        </div>
+                        
+                        <!-- Price -->
+                        <div class="text-center mb-4">
+                            <div class="text-3xl font-bold text-emerald-400">$${product.price}<span class="text-lg text-gray-400">/${product.unit}</span></div>
+                            <div class="text-gray-400">Total value: $${(product.price * product.quantity).toFixed(2)}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Details -->
+                    <div class="p-6 space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <div class="text-sm text-gray-400">Quantity</div>
+                                <div class="font-medium">${product.quantity} ${product.unit}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-400">Available Since</div>
+                                <div class="font-medium">${formatDate(product.date)}</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm text-gray-400 mb-1">Farm Details</div>
+                            <div class="font-medium">${product.farmName}</div>
+                            <div class="text-sm text-gray-400">${product.location}</div>
+                        </div>
+                        
+                        <div>
+                            <div class="text-sm text-gray-400 mb-1">Farmer</div>
+                            <div class="font-medium">${product.farmerName}</div>
+                            <div class="text-sm text-gray-400">Verified Farmer</div>
+                        </div>
+                        
+                        ${product.description ? `
+                        <div>
+                            <div class="text-sm text-gray-400 mb-1">Description</div>
+                            <div class="text-gray-300">${product.description}</div>
+                        </div>
+                        ` : ''}
+                        
+                        <!-- Stats -->
+                        <div class="grid grid-cols-3 gap-3 pt-4 border-t border-gray-700">
+                            <div class="text-center">
+                                <div class="text-lg font-bold">${product.views}</div>
+                                <div class="text-xs text-gray-400">Views</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-lg font-bold">${product.inquiries}</div>
+                                <div class="text-xs text-gray-400">Inquiries</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-lg font-bold">0</div>
+                                <div class="text-xs text-gray-400">Sales</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="p-6 border-t border-gray-700">
+                        <div class="space-y-3">
+                            <button onclick="contactFarmer(${product.id})" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 rounded-xl font-medium">
+                                💬 Contact Farmer
+                            </button>
+                            <button onclick="makeOffer(${product.id})" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white py-3 rounded-xl font-medium">
+                                💰 Make Offer
+                            </button>
+                            <button onclick="shareProduct(${product.id})" class="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-medium">
+                                📤 Share Product
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Increment views
+            product.views++;
+            saveUserData();
+        }
+
+        // ============ CARBON CREDITS ============
+        function updateCarbonCalculation() {
+            const farmSize = parseInt(document.getElementById('carbonFarmSize').value);
+            const agroforestry = document.getElementById('practiceAgro').checked;
+            const tillage = document.getElementById('practiceTillage').checked;
+            const organic = document.getElementById('practiceOrganic').checked;
+            
+            document.getElementById('carbonSizeValue').textContent = `${farmSize} ha`;
+            
+            // Calculate carbon tons (simplified)
+            let carbonPerHa = 0.5; // Base tons per hectare
+            
+            if (agroforestry) carbonPerHa += 1.2;
+            if (tillage) carbonPerHa += 0.8;
+            if (organic) carbonPerHa += 0.5;
+            
+            const totalTons = Math.round(farmSize * carbonPerHa * 10) / 10;
+            
+            // Calculate earnings ($15-25 per ton)
+            const pricePerTon = 20; // Average $20/ton
+            const earnings = Math.round(totalTons * pricePerTon);
+            
+            // Update display
+            document.getElementById('carbonTons').textContent = totalTons;
+            document.getElementById('carbonEarnings').textContent = `$${earnings}`;
+        }
+
+        function registerForCarbon() {
+            if (appData.userType !== 'farmer') {
+                showToast('Please register as a farmer first', 'warning');
+                showFarmerRegistration();
+                return;
+            }
+            
+            if (!appData.farmData) {
+                showToast('Please complete your farm profile', 'warning');
+                showFarmerRegistration();
+                return;
+            }
+            
+            // Calculate carbon potential
+            const farmSize = appData.farmData.size;
+            const practices = appData.farmData.practices || [];
+            
+            let carbonPerHa = 0.5;
+            if (practices.includes('agroforestry')) carbonPerHa += 1.2;
+            if (practices.includes('conservation')) carbonPerHa += 0.8;
+            if (practices.includes('organic')) carbonPerHa += 0.5;
+            
+            const totalTons = Math.round(farmSize * carbonPerHa * 10) / 10;
+            const earnings = Math.round(totalTons * 20);
+            
+            // Show confirmation
+            showToast(`🌍 Carbon program registered! Potential: ${totalTons} tons/year ($${earnings})`, 'success');
+            
+            // Send to bot
+            if (tg.sendData) {
+                tg.sendData(JSON.stringify({
+                    type: 'carbon_registration',
+                    data: {
+                        farmSize: farmSize,
+                        practices: practices,
+                        estimatedTons: totalTons,
+                        estimatedEarnings: earnings
+                    }
+                }));
+            }
+            
+            // Go back to carbon section
+            showSection('carbon');
+        }
+
+        // ============ PROFILE FUNCTIONS ============
+        function loadProfileData() {
+            // Update profile stats
+            document.getElementById('profileListings').textContent = appData.products.length;
+            document.getElementById('profileSales').textContent = '0'; // Would come from backend
+            document.getElementById('profileCarbon').textContent = calculateCarbonTotal();
+            
+            // Show farm info if available
+            if (appData.farmData) {
+                showFarmInfo(appData.farmData);
+            }
+            
+            // Update recent activity
+            updateRecentActivity();
+        }
+
+        function showFarmInfo(farmData) {
+            document.getElementById('farmInfo').classList.remove('hidden');
+            document.getElementById('farmInfoName').textContent = farmData.name;
+            document.getElementById('farmInfoType').textContent = getFarmTypeLabel(farmData.type);
+            document.getElementById('farmInfoSize').textContent = `${farmData.size} ha`;
+            document.getElementById('farmInfoLocation').textContent = getLocationLabel(farmData.location);
+            
+            // Also update profile type
+            document.getElementById('profileType').textContent = 'Farmer';
+        }
+
+        function updateRecentActivity() {
+            const container = document.getElementById('recentActivity');
+            container.innerHTML = '';
+            
+            if (appData.products.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <p class="text-gray-400">No activity yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Show recent products (max 3)
+            const recentProducts = [...appData.products]
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 3);
+            
+            recentProducts.forEach(product => {
+                const div = document.createElement('div');
+                div.className = 'bg-gray-800/30 rounded-lg p-3';
+                
+                // Map type to emoji
+                const typeEmojis = {
+                    'maize': '🌽',
+                    'soybeans': '🥜',
+                    'coffee': '☕',
+                    'wheat': '🌾'
+                };
+                
+                const emoji = typeEmojis[product.type] || '📦';
+                
+                div.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">${emoji}</span>
+                            <div>
+                                <div class="font-medium">${product.name}</div>
+                                <div class="text-xs text-gray-400">Listed ${formatDate(product.date)}</div>
+                            </div>
+                        </div>
+                        <div class="text-emerald-400 font-bold">$${product.price}</div>
+                    </div>
+                `;
+                
+                container.appendChild(div);
+            });
+        }
+
+        // ============ HELPER FUNCTIONS ============
+        function loadMockData() {
+            // Mock featured products
+            const featuredContainer = document.getElementById('featuredProducts');
+            featuredContainer.innerHTML = '';
+            
+            const mockProducts = [
+                { type: 'maize', name: 'White Maize Grade A', price: 210, unit: 'ton', quantity: 50, location: 'Copperbelt', date: '2024-02-18' },
+                { type: 'coffee', name: 'Arabica Coffee', price: 3800, unit: 'ton', quantity: 5, location: 'Eastern Province', date: '2024-02-17' },
+                { type: 'soybeans', name: 'Organic Soybeans', price: 480, unit: 'ton', quantity: 20, location: 'Lusaka', date: '2024-02-16' }
+            ];
+            
+            mockProducts.forEach(product => {
+                const div = document.createElement('div');
+                div.className = 'bg-gray-800/30 rounded-xl p-4 hover:bg-gray-800/50 cursor-pointer';
+                div.onclick = () => {
+                    showToast(`Feature coming soon: View ${product.name} details`, 'info');
+                };
+                
+                // Map type to emoji
+                const typeEmojis = {
+                    'maize': '🌽',
+                    'soybeans': '🥜',
+                    'coffee': '☕'
+                };
+                
+                const emoji = typeEmojis[product.type] || '📦';
+                
+                div.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-xl">${emoji}</span>
+                                <h4 class="font-bold">${product.name}</h4>
+                            </div>
+                            <p class="text-sm text-gray-400">${product.location} • ${product.quantity} ${product.unit}</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-emerald-400">$${product.price}/${product.unit}</div>
+                            <div class="text-xs text-gray-400">${formatDate(product.date)}</div>
+                        </div>
+                    </div>
+                `;
+                
+                featuredContainer.appendChild(div);
+            });
+            
+            // Update stats with mock data
+            document.getElementById('userCount').textContent = '1,234';
+            document.getElementById('productCount').textContent = '456';
+            document.getElementById('carbonCount').textContent = '12.5K';
+        }
+
+        function updateStats() {
+            // Update product count
+            document.getElementById('productCount').textContent = appData.products.length;
+            
+            // Update profile listings
+            document.getElementById('profileListings').textContent = appData.products.length;
+        }
+
+        function calculateCarbonTotal() {
+            if (!appData.farmData) return '0';
+            
+            const farmSize = appData.farmData.size;
+            const practices = appData.farmData.practices || [];
+            
+            let carbonPerHa = 0.5;
+            if (practices.includes('agroforestry')) carbonPerHa += 1.2;
+            if (practices.includes('conservation')) carbonPerHa += 0.8;
+            if (practices.includes('organic')) carbonPerHa += 0.5;
+            
+            return Math.round(farmSize * carbonPerHa * 10) / 10;
+        }
+
+        function getFarmTypeLabel(type) {
+            const labels = {
+                'crop': 'Crop Farming',
+                'livestock': 'Livestock Farming',
+                'mixed': 'Mixed Farming',
+                'organic': 'Organic Farming',
+                'energy': 'Energy Production'
+            };
+            return labels[type] || type;
+        }
+
+        function getLocationLabel(location) {
+            const labels = {
+                'lusaka': 'Lusaka Province',
+                'copperbelt': 'Copperbelt Province',
+                'eastern': 'Eastern Province',
+                'western': 'Western Province',
+                'northern': 'Northern Province',
+                'southern': 'Southern Province'
+            };
+            return labels[location] || location;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 0) return 'Today';
+            if (diffDays === 1) return 'Yesterday';
+            if (diffDays < 7) return `${diffDays} days ago`;
+            if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+            
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            
+            const toast = document.createElement('div');
+            toast.className = `bg-gray-800 border rounded-xl p-4 shadow-lg transform transition-all duration-300 ${
+                type === 'success' ? 'border-emerald-700' :
+                type === 'error' ? 'border-red-700' :
+                type === 'warning' ? 'border-amber-700' : 'border-blue-700'
+            }`;
+            
+            // Icon based on type
+            const icons = {
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️',
+                'info': '💡'
+            };
+            
+            toast.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <span class="text-xl">${icons[type] || '💡'}</span>
+                    <div class="flex-1">
+                        <p class="text-sm">${message}</p>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-gray-400 hover:text-white">
+                        ×
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (toast.parentElement) {
+                            toast.parentElement.removeChild(toast);
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+
+        function updateNotificationBadge() {
+            const badge = document.getElementById('notificationBadge');
+            if (appData.notifications > 0) {
+                badge.classList.remove('hidden');
+                badge.textContent = appData.notifications > 9 ? '9+' : appData.notifications;
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                // Close menu when clicking outside
+                setTimeout(() => {
+                    document.addEventListener('click', closeProfileMenu);
+                }, 10);
+            } else {
+                menu.classList.add('hidden');
+                document.removeEventListener('click', closeProfileMenu);
+            }
+        }
+
+        function closeProfileMenu(e) {
+            const menu = document.getElementById('profileMenu');
+            const avatar = document.getElementById('userAvatar');
+            
+            if (!menu.contains(e.target) && !avatar.contains(e.target)) {
+                menu.classList.add('hidden');
+                document.removeEventListener('click', closeProfileMenu);
+            }
+        }
+
+        // ============ PLACEHOLDER FUNCTIONS ============
+        function contactFarmer(productId) {
+            showToast('Contact feature coming soon', 'info');
+        }
+
+        function makeOffer(productId) {
+            showToast('Make offer feature coming soon', 'info');
+        }
+
+        function shareProduct(productId) {
+            showToast('Share feature coming soon', 'info');
+        }
+
+        function showTransactions() {
+            showToast('Transactions feature coming soon', 'info');
+        }
+
+        function showNotifications() {
+            showToast('Notifications feature coming soon', 'info');
+        }
+
+        function showSettings() {
+            showSection('settingsSection');
+        }
+
+        function showAllActivity() {
+            showToast('All activity feature coming soon', 'info');
+        }
+
+        function clearSearch() {
+            document.getElementById('marketSearch').value = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Clear local data
+                localStorage.removeItem('africhain_user_data');
+                
+                // Reload page (Telegram will re-authenticate)
+                location.reload();
+            }
+        }
+
+        // Initialize carbon calculator
+        updateCarbonCalculation();
+        
+        // Set default quality
+        setQuality('B');
+        
+        // Update price calculation on load
+        updatePriceCalculation();
     </script>
 </body>
 </html>
